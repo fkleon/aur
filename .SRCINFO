@@ -1,0 +1,17 @@
+pkgbase = bluebrick
+	pkgdesc = BlueBrick Lego Layout Planer
+	pkgver = 1.9.1
+	pkgrel = 1
+	url = https://bluebrick.lswproject.com
+	arch = x86_64
+	license = GPL-3.0-only
+	depends = mono
+	options = !strip
+	source = bluebrick-1.9.1.zip::https://bluebrick.lswproject.com/download/BlueBrick.1.9.1.zip
+	source = bluebrick.desktop
+	source = bluebrick.xml
+	sha256sums = 2fc69f384a1232d8e33cf3fb91cda0d2b8e876cbcdb072e5acfe4da2153b72c5
+	sha256sums = ce34bb46f555d725e83b31b2745872093a25e365654763648f5fb6e26330368d
+	sha256sums = 94683475a4d4bed0c6bcd525ab1d10f2d0c9c3ee964b096bae67e117d0033562
+
+pkgname = bluebrick
