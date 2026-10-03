@@ -1,0 +1,51 @@
+name: Publish changed AUR packages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.filter.outputs.changes }}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+      id: filter
+      with:
+        filters: |
+          amdgpu-profile-switcher: 'amdgpu-profile-switcher/**'
+          bluebrick: 'bluebrick/**'
+          bluebrick-extras: 'bluebrick-extras/**'
+          bluebrick-extras-lgauge: 'bluebrick-extras-lgauge/**'
+          ldraw-parts-library: 'ldraw-parts-library/**'
+          lsetwatch: 'lsetwatch/**'
+          ssh2incus: 'ssh2incus/**'
+          ssh2incus-bin: 'ssh2incus-bin/**'
+          track-designer: 'track-designer/**'
+
+  publish:
+    needs: changes
+    if: ${{ needs.changes.outputs.packages != '[]' }}
+    runs-on: ubuntu-latest
+    environment: aur
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.changes.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Publish ${{ matrix.package }} to AUR
+        uses: ulises-jeremias/github-actions-aur-publish@8d744a4c6bad989bb712ad1c1ebe18d6bd6b36a1 # v1.2.0
+        with:
+          pkgname: ${{ matrix.package }}
+          asset_dir: ./${{ matrix.package }}
+          commit_username: ${{ secrets.AUR_COMMIT_USERNAME }}
+          commit_email: ${{ secrets.AUR_COMMIT_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          allow_empty_commits: false
+          dry_run: ${{ github.ref_name != github.event.repository.default_branch }}
